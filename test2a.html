@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking place for your dinner</title>
+    <style>
+        .error { border-color: red; }
+        .valid { border-color: white; }
+        #message { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Booking place for your dinner!</h1>
+    <form id="bookingForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="phone">Phone number:</label>
+        <input type="text" id="phone" name="phone"><br><br>
+
+        <label>Select a time:</label><br>
+        <input type="radio" id="time5" name="time" value="05:00" checked>
+        <label for="time5">05:00</label><br>
+        <input type="radio" id="time6" name="time" value="06:00">
+        <label for="time6">06:00</label><br>
+        <input type="radio" id="time7" name="time" value="07:00">
+        <label for="time7">07:00</label><br>
+        <input type="radio" id="time8" name="time" value="08:00">
+        <label for="time8">08:00</label><br><br>
+
+        <label>What would you like to have with us?</label><br>
+        <input type="checkbox" id="starters" name="starters" value="Starters">
+        <label for="starters">Starters</label><br>
+        <input type="checkbox" id="main_course" name="main_course" value="Main_Course">
+        <label for="main_course">Main Course</label><br>
+        <input type="checkbox" id="desserts" name="desserts" value="Desserts">
+        <label for="desserts">Desserts</label><br>
+        <input type="checkbox" id="drinks" name="drinks" value="Drinks">
+        <label for="drinks">Drinks</label><br><br>
+
+        <button type="submit" id="submit" disabled>Submit</button>
+        <p id="message">...</p>
+    </form>
+
+    <script>
+        document.getElementById('name').addEventListener('blur', validateName);
+        document.getElementById('phone').addEventListener('blur', validatePhone);
+        document.getElementById('name').addEventListener('input', enableSubmit);
+        document.getElementById('phone').addEventListener('input', enableSubmit);
+
+        function validateName() {
+            const nameField = document.getElementById('name');
+            const message = document.getElementById('message');
+            const nameValue = nameField.value.trim();
+
+            if (!nameValue) {
+                message.textContent = "Error: Name is empty.";
+                nameField.classList.add('error');
+                nameField.classList.remove('valid');
+                return false;
+            } else if (nameValue.split(' ').length < 2) {
+                message.textContent = "Error: First and last names are required.";
+                nameField.classList.add('error');
+                nameField.classList.remove('valid');
+                return false;
+            } else {
+                message.textContent = "...";
+                nameField.classList.remove('error');
+                nameField.classList.add('valid');
+                return true;
+            }
+        }
+
+        function validatePhone() {
+            const phoneField = document.getElementById('phone');
+            const message = document.getElementById('message');
+            const phoneValue = phoneField.value.trim();
+
+            if (!phoneValue) {
+                message.textContent = "Error: Phone number is empty.";
+                phoneField.classList.add('error');
+                phoneField.classList.remove('valid');
+                return false;
+            } else if (phoneValue.length !== 6) {
+                message.textContent = "Error: Phone numbers must have exactly 6 characters.";
+                phoneField.classList.add('error');
+                phoneField.classList.remove('valid');
+                return false;
+            } else if (!/^\d/.test(phoneValue)) {
+                message.textContent = "Error: Phone number must start with numbers.";
+                phoneField.classList.add('error');
+                phoneField.classList.remove('valid');
+                return false;
+            } else {
+                message.textContent = "...";
+                phoneField.classList.remove('error');
+                phoneField.classList.add('valid');
+                return true;
+            }
+        }
+
+        function enableSubmit() {
+            const submitButton = document.getElementById('submit');
+            const isValidName = validateName();
+            const isValidPhone = validatePhone();
+
+            if (isValidName && isValidPhone) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent actual form submission for demo purposes
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const time = document.querySelector('input[name="time"]:checked').value;
+            const starters = document.getElementById('starters').checked ? "Starters" : "";
+            const mainCourse = document.getElementById('main_course').checked ? "Main Course" : "";
+            const desserts = document.getElementById('desserts').checked ? "Desserts" : "";
+            const drinks = document.getElementById('drinks').checked ? "Drinks" : "";
+
+            const selectedItems = [starters, mainCourse, desserts, drinks].filter(Boolean).join(", ");
+            document.getElementById('message').textContent = `Reservation for: ${name} Phone: (${phone}) at ${time} with: ${selectedItems || 'None'}.`;
+        });
+    </script>
+</body>
+</html>
